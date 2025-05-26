@@ -1,0 +1,54 @@
+{
+  "name": "vitest-browser-preact",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Render Preact components in Vitest Browser Mode",
+  "license": "MIT",
+  "homepage": "https://github.com/JoviDeCroock/vitest-browser-preact#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoviDeCroock/vitest-browser-preact.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JoviDeCroock/vitest-browser-svelte/issues"
+  },
+  "keywords": [
+    "preact",
+    "vitest"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./pure": {
+      "types": "./dist/pure.d.ts",
+      "default": "./dist/pure.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "engines": {
+    "node": "^18.0.0 || >=20.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest"
+  },
+  "peerDependencies": {
+    "@vitest/browser": "^2.1.0 || ^3.0.0-0",
+    "preact": "^10.0.0",
+    "vitest": "^2.1.0 || ^3.0.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.0.0",
+    "@vitest/browser": "^3.0.0-beta.4",
+    "playwright": "^1.46.0",
+    "preact": "^10.0.0",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4",
+    "vite": "6",
+    "vitest": "^3.0.0"
+  }
+}

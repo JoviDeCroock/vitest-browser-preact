@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renders simple component 1`] = `
+<div
+  id="vitest-preact-wrapper-0"
+>
+  <div>
+    Hello World
+  </div>
+</div>
+`;
