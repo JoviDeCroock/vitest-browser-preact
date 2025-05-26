@@ -32,6 +32,7 @@
   "scripts": {
     "build": "tsup",
     "format": "biome format --write",
+    "format:check": "biome format",
     "lint": "oxlint",
     "test": "vitest"
   },
