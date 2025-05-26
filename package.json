@@ -10,7 +10,7 @@
     "url": "git+https://github.com/JoviDeCroock/vitest-browser-preact.git"
   },
   "bugs": {
-    "url": "https://github.com/JoviDeCroock/vitest-browser-svelte/issues"
+    "url": "https://github.com/JoviDeCroock/vitest-browser-preact/issues"
   },
   "keywords": ["preact", "vitest"],
   "exports": {
