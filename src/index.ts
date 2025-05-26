@@ -1,4 +1,4 @@
-import { page } from '@vitest/browser/context'
+import { page, userEvent } from '@vitest/browser/context'
 import { beforeEach } from 'vitest'
 import { cleanup, render } from './pure'
 

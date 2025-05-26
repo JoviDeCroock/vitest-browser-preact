@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { page } from '@vitest/browser/context'
+import { page, userEvent } from '@vitest/browser/context'
 import { render } from 'vitest-browser-preact'
 import { useState } from 'preact/hooks'
 
@@ -17,6 +17,12 @@ const Counter = (props) => {
   )
 }
 
+const Input = () => {
+    const [value, setValue] = useState('')
+    const onChange = (e) => setValue(e.target.value + '!')
+    return <input value={value} onInput={onChange} />
+}
+
 test('renders simple component', async () => {
   const screen = render(<HelloWorld />)
   await expect.element(page.getByText('Hello World')).toBeVisible()
@@ -29,4 +35,10 @@ test('renders counter', async () => {
   await expect.element(screen.getByText('Count is 1')).toBeVisible()
   await screen.getByRole('button', { name: 'Increment' }).click()
   await expect.element(screen.getByText('Count is 2')).toBeVisible()
+})
+
+test('renders counter with user event', async () => {
+  const screen = render(<Input />)
+  await userEvent.fill(screen.getByRole('textbox'), 'Hello')
+  await expect.element(screen.getByRole('textbox')).toHaveValue('Hello!')
 })
