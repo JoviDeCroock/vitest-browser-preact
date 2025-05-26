@@ -1,7 +1,7 @@
 {
   "name": "vitest-browser-preact",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Render Preact components in Vitest Browser Mode",
   "license": "MIT",
   "homepage": "https://github.com/JoviDeCroock/vitest-browser-preact#readme",
@@ -29,7 +29,9 @@
   "engines": {
     "node": "^18.0.0 || >=20.0.0"
   },
+  "files": ["dist", "src", "CHANGELOG.md", "README.md", "LICENSE"],
   "scripts": {
+    "prepublishOnly": "pnpm build && pnpm vitest run",
     "build": "tsup",
     "format": "biome format --write",
     "format:check": "biome format",
