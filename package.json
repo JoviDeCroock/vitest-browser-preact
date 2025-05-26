@@ -34,7 +34,11 @@
     "format": "biome format --write",
     "format:check": "biome format",
     "lint": "oxlint",
-    "test": "vitest"
+    "test": "vitest",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx,json}": "biome format --write"
   },
   "peerDependencies": {
     "@vitest/browser": "^2.1.0 || ^3.0.0-0",
@@ -45,6 +49,8 @@
     "@biomejs/biome": "^1.9.4",
     "@preact/preset-vite": "^2.0.0",
     "@vitest/browser": "^3.0.0-beta.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0",
     "oxlint": "^0.16.12",
     "playwright": "^1.46.0",
     "preact": "^10.0.0",
