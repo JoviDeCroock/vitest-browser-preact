@@ -40,8 +40,6 @@ export interface ComponentRenderOptions {
 	wrapper?: ({ children }: { children: JSX.Element }) => JSX.Element;
 }
 
-// Ideally we'd just use a WeakMap where containers are keys and roots are values.
-// We use two variables so that we can bail out in constant time when we render with a new container (most common use case)
 const mountedContainers = new Set<HTMLElement>();
 
 let counter = 0;
@@ -106,16 +104,4 @@ export function cleanup(): void {
 		}
 	});
 	mountedContainers.clear();
-}
-
-export interface RenderConfiguration {
-	reactStrictMode: boolean;
-}
-
-const config: RenderConfiguration = {
-	reactStrictMode: false
-};
-
-export function configure(customConfig: Partial<RenderConfiguration>): void {
-	Object.assign(config, customConfig);
 }
