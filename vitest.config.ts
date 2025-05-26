@@ -8,7 +8,7 @@ export default defineConfig({
 		browser: {
 			enabled: true,
 			headless: true,
-			name: 'chromium',
+			instances: [{ browser: 'chromium' }],
 			provider: 'playwright'
 		}
 	}

@@ -1,7 +1,7 @@
 {
   "name": "vitest-browser-preact",
   "type": "module",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Render Preact components in Vitest Browser Mode",
   "license": "MIT",
   "homepage": "https://github.com/JoviDeCroock/vitest-browser-preact#readme",
