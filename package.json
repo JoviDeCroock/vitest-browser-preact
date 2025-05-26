@@ -12,10 +12,7 @@
   "bugs": {
     "url": "https://github.com/JoviDeCroock/vitest-browser-svelte/issues"
   },
-  "keywords": [
-    "preact",
-    "vitest"
-  ],
+  "keywords": ["preact", "vitest"],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -34,6 +31,8 @@
   },
   "scripts": {
     "build": "tsup",
+    "format": "biome format --write",
+    "lint": "oxlint",
     "test": "vitest"
   },
   "peerDependencies": {
@@ -42,8 +41,10 @@
     "vitest": "^2.1.0 || ^3.0.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@preact/preset-vite": "^2.0.0",
     "@vitest/browser": "^3.0.0-beta.4",
+    "oxlint": "^0.16.12",
     "playwright": "^1.46.0",
     "preact": "^10.0.0",
     "tsup": "^8.2.4",
