@@ -1,11 +1,13 @@
-import type { Locator, LocatorSelectors } from '@vitest/browser/context';
-import {
-	type PrettyDOMOptions,
-	debug,
-	getElementLocatorSelectors
-} from '@vitest/browser/utils';
+import type {
+	Locator,
+	LocatorSelectors,
+	PrettyDOMOptions
+} from 'vitest/browser';
+import { page, utils } from 'vitest/browser';
 import { act as preactAct } from 'preact/test-utils';
 import { createElement, JSX, render as preactRender } from 'preact';
+
+const { debug, getElementLocatorSelectors } = utils;
 
 function act(cb: () => void | Promise<void>) {
 	const _act = preactAct;
@@ -24,6 +26,7 @@ function act(cb: () => void | Promise<void>) {
 export interface RenderResult extends LocatorSelectors {
 	container: HTMLElement;
 	baseElement: HTMLElement;
+	locator: Locator;
 	debug: (
 		el?: HTMLElement | HTMLElement[] | Locator | Locator[],
 		maxLength?: number,
@@ -51,7 +54,11 @@ export function render(
 		wrapper: WrapperComponent
 	}: ComponentRenderOptions = {}
 ): RenderResult {
-	if (!baseElement) baseElement = document.body;
+	if (!baseElement) {
+		// default to document.body instead of documentElement to avoid output of potentially-large
+		// head elements (such as JSS style blocks) in debug output
+		baseElement = document.body;
+	}
 
 	if (!container) {
 		const elementWrapper = document.createElement('div');
@@ -70,6 +77,7 @@ export function render(
 	return {
 		container,
 		baseElement,
+		locator: page.elementLocator(container),
 		debug: (el, maxLength, options) => debug(el, maxLength, options),
 		unmount: () => {
 			act(() => {

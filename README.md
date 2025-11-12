@@ -2,6 +2,8 @@
 
 A modern testing setup demonstrating browser-based testing for Preact components using Vitest. This project showcases how to effectively test Preact components with real browser interactions, making it perfect for testing complex UI behaviors.
 
+Requires `vitest` 4.0.0 or higher.
+
 ## Getting Started
 
 ```bash
