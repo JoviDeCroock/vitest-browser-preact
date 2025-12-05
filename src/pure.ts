@@ -102,14 +102,16 @@ export async function render(
 	};
 }
 
-export function cleanup(): void {
-	mountedContainers.forEach(async container => {
+export async function cleanup(): Promise<void> {
+	const containers = Array.from(mountedContainers);
+	mountedContainers.clear();
+
+	for (const container of containers) {
 		await act(() => {
 			preactRender(null, container);
 		});
 		if (container.parentNode === document.body) {
 			document.body.removeChild(container);
 		}
-	});
-	mountedContainers.clear();
+	}
 }
