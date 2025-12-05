@@ -24,13 +24,13 @@ const Input = () => {
 };
 
 test('renders simple component', async () => {
-	const screen = render(<HelloWorld />);
+	const screen = await render(<HelloWorld />);
 	await expect.element(page.getByText('Hello World')).toBeVisible();
 	expect(screen.container).toMatchSnapshot();
 });
 
 test('renders counter', async () => {
-	const screen = render(<Counter initialCount={1} />);
+	const screen = await render(<Counter initialCount={1} />);
 
 	await expect.element(screen.getByText('Count is 1')).toBeVisible();
 	await screen.getByRole('button', { name: 'Increment' }).click();
@@ -38,7 +38,7 @@ test('renders counter', async () => {
 });
 
 test('renders counter with user event', async () => {
-	const screen = render(<Input />);
+	const screen = await render(<Input />);
 	await userEvent.fill(screen.getByRole('textbox'), 'Hello');
 	await expect.element(screen.getByRole('textbox')).toHaveValue('Hello!');
 });
@@ -47,7 +47,9 @@ test('renders counter with wrapper', async () => {
 	const Wrapper = ({ children }) => (
 		<div id="wrapper">Wrapper of {children}</div>
 	);
-	const screen = render(<Counter initialCount={1} />, { wrapper: Wrapper });
+	const screen = await render(<Counter initialCount={1} />, {
+		wrapper: Wrapper
+	});
 	await expect.element(screen.getByText('Count is 1')).toBeVisible();
 	await expect.element(screen.getByText('Wrapper of')).toBeVisible();
 });
