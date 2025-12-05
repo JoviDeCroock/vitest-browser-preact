@@ -9,14 +9,14 @@ import { createElement, JSX, render as preactRender } from 'preact';
 
 const { debug, getElementLocatorSelectors } = utils;
 
-function act(cb: () => void | Promise<void>) {
+async function act(cb: () => void | Promise<void>) {
 	const _act = preactAct;
 	if (typeof _act !== 'function') {
-		cb();
+		await cb();
 	} else {
 		(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 		try {
-			_act(cb);
+			await _act(cb);
 		} finally {
 			(globalThis as any).IS_REACT_ACT_ENVIRONMENT = false;
 		}
@@ -46,14 +46,14 @@ export interface ComponentRenderOptions {
 const mountedContainers = new Set<HTMLElement>();
 
 let counter = 0;
-export function render(
+export async function render(
 	ui: JSX.Element,
 	{
 		container,
 		baseElement,
 		wrapper: WrapperComponent
 	}: ComponentRenderOptions = {}
-): RenderResult {
+): Promise<RenderResult> {
 	if (!baseElement) {
 		// default to document.body instead of documentElement to avoid output of potentially-large
 		// head elements (such as JSS style blocks) in debug output
@@ -66,7 +66,7 @@ export function render(
 		container = baseElement.appendChild(elementWrapper);
 	}
 
-	act(() => {
+	await act(() => {
 		const wrapper = WrapperComponent
 			? createElement(WrapperComponent, { children: ui })
 			: ui;
@@ -79,14 +79,14 @@ export function render(
 		baseElement,
 		locator: page.elementLocator(container),
 		debug: (el, maxLength, options) => debug(el, maxLength, options),
-		unmount: () => {
-			act(() => {
+		unmount: async () => {
+			await act(() => {
 				preactRender(null, container);
 				mountedContainers.delete(container);
 			});
 		},
-		rerender: (newUi: JSX.Element) => {
-			act(() => {
+		rerender: async (newUi: JSX.Element) => {
+			await act(() => {
 				const wrapper = WrapperComponent
 					? createElement(WrapperComponent, { children: newUi })
 					: newUi;
@@ -103,8 +103,8 @@ export function render(
 }
 
 export function cleanup(): void {
-	mountedContainers.forEach(container => {
-		act(() => {
+	mountedContainers.forEach(async container => {
+		await act(() => {
 			preactRender(null, container);
 		});
 		if (container.parentNode === document.body) {
