@@ -1,13 +1,43 @@
+import { type JSX, createElement, render as preactRender } from 'preact';
+import { act as preactAct } from 'preact/test-utils';
 import type {
 	Locator,
 	LocatorSelectors,
 	PrettyDOMOptions
 } from 'vitest/browser';
-import { page, utils } from 'vitest/browser';
-import { act as preactAct } from 'preact/test-utils';
-import { createElement, JSX, render as preactRender } from 'preact';
+import { page, server, utils } from 'vitest/browser';
 
 const { debug, getElementLocatorSelectors } = utils;
+
+let testIdCounter = 0;
+
+function getTestIdAttribute(): string {
+	return server.config.browser.locators.testIdAttribute ?? 'data-testid';
+}
+
+function ensureTestIdAttribute(element: HTMLElement) {
+	const attributeId = getTestIdAttribute();
+	if (!element.hasAttribute(attributeId)) {
+		element.setAttribute(attributeId, `__vitest_${testIdCounter++}__`);
+	}
+}
+
+function mark(locator: Locator, name: string, fn: Function) {
+	const traceLocator = locator as Locator & {
+		mark?: (name: string, error: Error) => unknown;
+	};
+
+	if (!traceLocator.mark) {
+		return;
+	}
+
+	const error = new Error(name);
+	if ('captureStackTrace' in Error) {
+		(Error as any).captureStackTrace(error, fn);
+	}
+
+	return traceLocator.mark(name, error);
+}
 
 function act(cb: () => void | Promise<void>) {
 	const _act = preactAct;
@@ -43,9 +73,11 @@ export interface ComponentRenderOptions {
 	wrapper?: ({ children }: { children: JSX.Element }) => JSX.Element;
 }
 
+export interface RenderOptions extends ComponentRenderOptions {}
+
 const mountedContainers = new Set<HTMLElement>();
 
-let counter = 0;
+let wrapperCounter = 0;
 export function render(
 	ui: JSX.Element,
 	{
@@ -62,9 +94,12 @@ export function render(
 
 	if (!container) {
 		const elementWrapper = document.createElement('div');
-		elementWrapper.id = `vitest-preact-wrapper-${counter++}`;
+		elementWrapper.id = `vitest-preact-wrapper-${wrapperCounter++}`;
 		container = baseElement.appendChild(elementWrapper);
 	}
+
+	ensureTestIdAttribute(baseElement);
+	ensureTestIdAttribute(container);
 
 	act(() => {
 		const wrapper = WrapperComponent
@@ -74,16 +109,20 @@ export function render(
 		mountedContainers.add(container);
 	});
 
-	return {
+	const locator = page.elementLocator(container);
+	mark(locator, 'preact.render', render);
+
+	const renderResult: RenderResult = {
 		container,
 		baseElement,
-		locator: page.elementLocator(container),
+		locator,
 		debug: (el, maxLength, options) => debug(el, maxLength, options),
 		unmount: () => {
 			act(() => {
 				preactRender(null, container);
 				mountedContainers.delete(container);
 			});
+			mark(locator, 'preact.unmount', renderResult.unmount);
 		},
 		rerender: (newUi: JSX.Element) => {
 			act(() => {
@@ -92,6 +131,7 @@ export function render(
 					: newUi;
 				preactRender(wrapper, container);
 			});
+			mark(locator, 'preact.rerender', renderResult.rerender);
 		},
 		asFragment: () => {
 			return document
@@ -100,6 +140,8 @@ export function render(
 		},
 		...getElementLocatorSelectors(baseElement)
 	};
+
+	return renderResult;
 }
 
 export function cleanup(): void {

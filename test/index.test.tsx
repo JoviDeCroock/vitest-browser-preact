@@ -1,7 +1,8 @@
-import { expect, test } from 'vitest';
-import { page, userEvent } from 'vitest/browser';
-import { render } from 'vitest-browser-preact';
 import { useState } from 'preact/hooks';
+import { expect, test } from 'vitest';
+import type { RenderOptions } from 'vitest-browser-preact';
+import { render } from 'vitest-browser-preact';
+import { page, userEvent } from 'vitest/browser';
 
 const HelloWorld = () => {
 	return <div>Hello World</div>;
@@ -27,6 +28,21 @@ test('renders simple component', async () => {
 	const screen = render(<HelloWorld />);
 	await expect.element(page.getByText('Hello World')).toBeVisible();
 	expect(screen.container).toMatchSnapshot();
+});
+
+test('injects stable locator test ids', () => {
+	const screen = render(<HelloWorld />);
+	expect(screen.baseElement.getAttribute('data-testid')).toMatch(
+		/^__vitest_\d+__$/
+	);
+	expect(screen.container.getAttribute('data-testid')).toMatch(
+		/^__vitest_\d+__$/
+	);
+});
+
+test('exports RenderOptions type', () => {
+	const options: RenderOptions = {};
+	expect(options).toEqual({});
 });
 
 test('renders counter', async () => {

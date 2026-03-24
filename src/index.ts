@@ -1,9 +1,13 @@
-import { page } from 'vitest/browser';
 import { beforeEach } from 'vitest';
+import { page } from 'vitest/browser';
 import { cleanup, render } from './pure';
 
 export { render, cleanup } from './pure';
-export type { ComponentRenderOptions, RenderResult } from './pure';
+export type {
+	ComponentRenderOptions,
+	RenderOptions,
+	RenderResult
+} from './pure';
 
 page.extend({
 	render,
