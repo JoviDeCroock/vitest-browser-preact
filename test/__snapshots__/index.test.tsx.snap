@@ -2,6 +2,7 @@
 
 exports[`renders simple component 1`] = `
 <div
+  data-testid="__vitest_1__"
   id="vitest-preact-wrapper-0"
 >
   <div>
