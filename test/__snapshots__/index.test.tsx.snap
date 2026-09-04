@@ -1,12 +1,3 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`renders simple component 1`] = `
-<div
-  data-testid="__vitest_1__"
-  id="vitest-preact-wrapper-0"
->
-  <div>
-    Hello World
-  </div>
-</div>
-`;
+exports[`renders simple component 1`] = `"<div>Hello World</div>"`;
