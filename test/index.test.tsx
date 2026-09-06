@@ -27,7 +27,7 @@ const Input = () => {
 test('renders simple component', async () => {
 	const screen = render(<HelloWorld />);
 	await expect.element(page.getByText('Hello World')).toBeVisible();
-	expect(screen.container).toMatchSnapshot();
+	expect(screen.container.innerHTML).toMatchSnapshot();
 });
 
 test('injects stable locator test ids', () => {
@@ -65,5 +65,5 @@ test('renders counter with wrapper', async () => {
 	);
 	const screen = render(<Counter initialCount={1} />, { wrapper: Wrapper });
 	await expect.element(screen.getByText('Count is 1')).toBeVisible();
-	await expect.element(screen.getByText('Wrapper of')).toBeVisible();
+	await expect.element(screen.getByText(/Wrapper of/)).toBeVisible();
 });

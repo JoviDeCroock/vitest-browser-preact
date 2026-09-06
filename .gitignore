@@ -110,6 +110,9 @@ dist
 # vitepress cache directory
 **/.vitepress/cache
 
+# Vitest artifacts
+.vitest/
+
 # Docusaurus cache and generated files
 .docusaurus
 
