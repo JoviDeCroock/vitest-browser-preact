@@ -23,11 +23,7 @@ function ensureTestIdAttribute(element: HTMLElement) {
 }
 
 function mark(locator: Locator, name: string, fn: Function) {
-	const traceLocator = locator as Locator & {
-		mark?: (name: string, error: Error) => unknown;
-	};
-
-	if (!traceLocator.mark) {
+	if (!locator.mark) {
 		return;
 	}
 
@@ -36,17 +32,17 @@ function mark(locator: Locator, name: string, fn: Function) {
 		(Error as any).captureStackTrace(error, fn);
 	}
 
-	return traceLocator.mark(name, error);
+	return locator.mark(name, error);
 }
 
-function act(cb: () => void | Promise<void>) {
+async function act(cb: () => void | Promise<void>) {
 	const _act = preactAct;
 	if (typeof _act !== 'function') {
 		cb();
 	} else {
 		(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 		try {
-			_act(cb);
+			await _act(cb);
 		} finally {
 			(globalThis as any).IS_REACT_ACT_ENVIRONMENT = false;
 		}
@@ -78,14 +74,14 @@ export interface RenderOptions extends ComponentRenderOptions {}
 const mountedContainers = new Set<HTMLElement>();
 
 let wrapperCounter = 0;
-export function render(
+export async function render(
 	ui: JSX.Element,
 	{
 		container,
 		baseElement,
 		wrapper: WrapperComponent
 	}: ComponentRenderOptions = {}
-): RenderResult {
+): Promise<RenderResult> {
 	if (!baseElement) {
 		// default to document.body instead of documentElement to avoid output of potentially-large
 		// head elements (such as JSS style blocks) in debug output
@@ -101,7 +97,7 @@ export function render(
 	ensureTestIdAttribute(baseElement);
 	ensureTestIdAttribute(container);
 
-	act(() => {
+	await act(() => {
 		const wrapper = WrapperComponent
 			? createElement(WrapperComponent, { children: ui })
 			: ui;
@@ -110,28 +106,28 @@ export function render(
 	});
 
 	const locator = page.elementLocator(container);
-	mark(locator, 'preact.render', render);
+	await mark(locator, 'preact.render', render);
 
 	const renderResult: RenderResult = {
 		container,
 		baseElement,
 		locator,
 		debug: (el, maxLength, options) => debug(el, maxLength, options),
-		unmount: () => {
-			act(() => {
+		unmount: async () => {
+			await act(() => {
 				preactRender(null, container);
 				mountedContainers.delete(container);
 			});
-			mark(locator, 'preact.unmount', renderResult.unmount);
+			await mark(locator, 'preact.unmount', renderResult.unmount);
 		},
-		rerender: (newUi: JSX.Element) => {
-			act(() => {
+		rerender: async (newUi: JSX.Element) => {
+			await act(() => {
 				const wrapper = WrapperComponent
 					? createElement(WrapperComponent, { children: newUi })
 					: newUi;
 				preactRender(wrapper, container);
 			});
-			mark(locator, 'preact.rerender', renderResult.rerender);
+			await mark(locator, 'preact.rerender', renderResult.rerender);
 		},
 		asFragment: () => {
 			return document

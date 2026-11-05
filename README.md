@@ -17,7 +17,7 @@ import { render } from 'vitest-browser-preact'
 import { expect, test } from 'vitest'
 
 test('renders counter', async () => {
-  const screen = render(<Counter initialCount={1} />);
+  const screen = await render(<Counter initialCount={1} />);
   await expect.element(screen.getByText('Count is 1')).toBeVisible();
   await screen.getByRole('button', { name: 'Increment' }).click();
   await expect.element(screen.getByText('Count is 2')).toBeVisible();
@@ -31,7 +31,7 @@ object.
 import { expect, test } from 'vitest'
 
 test('renders counter', async () => {
-  const screen = page.render(<Counter initialCount={1} />);
+  const screen = await page.render(<Counter initialCount={1} />);
   await expect.element(screen.getByText('Count is 1')).toBeVisible();
   await screen.getByRole('button', { name: 'Increment' }).click();
   await expect.element(screen.getByText('Count is 2')).toBeVisible();
@@ -58,8 +58,8 @@ Example with options:
 ```tsx
 import { render } from 'vitest-browser-preact'
 
-test('renders with custom container', () => {
-  const screen = render(<MyComponent />, { 
+test('renders with custom container', async () => {
+  const screen = await render(<MyComponent />, { 
     wrapper: ({ children }) => (
       <Context.Provider value={{ foo: 'bar' }}>
         {children}
