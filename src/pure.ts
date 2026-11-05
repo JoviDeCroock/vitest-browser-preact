@@ -58,8 +58,8 @@ export interface RenderResult extends LocatorSelectors {
 		maxLength?: number,
 		options?: PrettyDOMOptions
 	) => void;
-	unmount: () => void;
-	rerender: (ui: JSX.Element) => void;
+	unmount: () => Promise<void>;
+	rerender: (ui: JSX.Element) => Promise<void>;
 	asFragment: () => DocumentFragment;
 }
 

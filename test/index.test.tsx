@@ -1,5 +1,5 @@
-import { useState } from 'preact/hooks';
-import { expect, test } from 'vitest';
+import { useEffect, useState } from 'preact/hooks';
+import { expect, expectTypeOf, test, vi } from 'vitest';
 import type { RenderOptions } from 'vitest-browser-preact';
 import { render } from 'vitest-browser-preact';
 import { page, userEvent } from 'vitest/browser';
@@ -68,4 +68,30 @@ test('renders counter with wrapper', async () => {
 	});
 	await expect.element(screen.getByText('Count is 1')).toBeVisible();
 	await expect.element(screen.getByText(/Wrapper of/)).toBeVisible();
+});
+
+test('awaits rerender and flushes effects', async () => {
+	const Message = ({ message }: { message: string }) => {
+		const [value, setValue] = useState('');
+		useEffect(() => setValue(message), [message]);
+		return <div>{value}</div>;
+	};
+	const screen = await render(<Message message="before" />);
+	expectTypeOf(screen.rerender).returns.toEqualTypeOf<Promise<void>>();
+	expect(screen.container.textContent).toBe('before');
+	await screen.rerender(<Message message="after" />);
+	expect(screen.container.textContent).toBe('after');
+});
+
+test('awaits unmount and runs effect cleanup', async () => {
+	const onCleanup = vi.fn();
+	const Component = () => {
+		useEffect(() => onCleanup, []);
+		return <div>mounted</div>;
+	};
+	const screen = await render(<Component />);
+	expectTypeOf(screen.unmount).returns.toEqualTypeOf<Promise<void>>();
+	await screen.unmount();
+	expect(screen.container.innerHTML).toBe('');
+	expect(onCleanup).toHaveBeenCalledTimes(1);
 });

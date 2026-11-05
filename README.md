@@ -69,6 +69,18 @@ test('renders with custom container', async () => {
 });
 ```
 
+## Rerendering and unmounting
+
+`render()` returns a `Promise<RenderResult>`. The result's `rerender()` and
+`unmount()` methods return `Promise<void>` and must also be awaited so their trace
+markers finish before the next operation.
+
+```tsx
+const screen = await render(<MyComponent value="before" />);
+await screen.rerender(<MyComponent value="after" />);
+await screen.unmount();
+```
+
 ## Contributing
 
 Feel free to open issues and pull requests. All contributions are welcome!
